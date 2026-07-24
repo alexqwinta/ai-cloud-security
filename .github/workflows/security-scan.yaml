@@ -1,0 +1,35 @@
+name: Continuous Security Guard (DevSecOps)
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  infrastructure-audit:
+    name: Run Checkov & Trivy Scanners
+    runs-on: ubuntu-latest
+
+    steps:
+    # Крок 1: Завантажуємо код розробників у віртуальну машину GitHub
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Крок 2: Автоматично запускаємо сканування Terraform-коду
+    - name: Test Cloud Infrastructure (Checkov)
+      uses: bridgecrewio/checkov-action@master
+      with:
+        framework: terraform
+        output_format: cli
+        soft_fail: false # Конвеєр впаде (зупиниться), якщо будуть критичні дірки
+
+    # Крок 3: Автоматично запускаємо сканування Kubernetes-маніфестів
+    - name: Test Kubernetes Configuration (Trivy)
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'config'
+        hide-progress: false
+        format: 'table'
+        exit-code: '1' # Повертає помилку і блокує конвеєр, якщо знайдено HIGH/CRITICAL
+        severity: 'HIGH,CRITICAL'
