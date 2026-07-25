@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secure-ai-model
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-model
+  template:
+    metadata:
+      labels:
+        app: ai-model
+    spec:
+      # 1. Глобальні налаштування безпеки для всього ПОДУ (Виправляє AVD-KSV-0118)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+      - name: python-ai
+        image: python:3.9-slim
+        command: ["sleep", "3600"]
+        # 2. Індивідуальні налаштування для конкретного КОНТЕЙНЕРА
+        securityContext:
+          privileged: false
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
