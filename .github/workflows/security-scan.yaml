@@ -50,11 +50,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install garak
 
-    - name: Execute Active Garak Probes against LLM
+     - name: Execute Active Garak Probes against LLM
       env:
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        OPENAI_API_KEY: ${{ secrets.GROQ_API_KEY }} # Ключ дублюється для сумісності з модулем openai
-        OPENAI_BASE_URL: https://groq.com # Примусово перенаправляємо openai на Groq API
       run: |
-        # Запускаємо чисту команду без зайвих прапорців урлів, які ламають CLI
+        # Експортуємо обидві змінні безпосередньо в сесію раннера
+        export OPENAI_API_KEY="${{ secrets.GROQ_API_KEY }}"
+        export OPENAI_BASE_URL="https://groq.com"
+        
+        # Запускаємо сканування у чистому вигляді
         python -m garak --target_type openai --target_name llama3-8b-8192 --probes promptinject
