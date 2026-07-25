@@ -52,8 +52,6 @@ jobs:
 
     - name: Execute Active Garak Probes against LLM
       env:
-        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }} # Ключ береться із секретів вашого GitHub
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       run: |
-        python -m garak --target_type groq --target_name llama3-8b-8192 --probes promptinject --exit_on_hit 1
-
-
+        python -m garak --target_type openai --target_name llama3-8b-8192 --model_base https://groq.com --probes promptinject --exit_on_hit 1
