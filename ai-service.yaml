@@ -25,3 +25,4 @@ spec:
           privileged: false
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
+
