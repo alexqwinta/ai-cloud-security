@@ -54,4 +54,4 @@ jobs:
       env:
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       run: |
-        python -m garak --target_type openai --target_name llama3-8b-8192 --model_base https://groq.com --probes promptinject --exit_on_hit 1
+        python -m garak --target_type openai --target_name llama3-8b-8192 --model_url https://groq.com --probes promptinject --exit_on_hit
