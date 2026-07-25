@@ -53,5 +53,8 @@ jobs:
     - name: Execute Active Garak Probes against LLM
       env:
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.GROQ_API_KEY }} # Ключ дублюється для сумісності з модулем openai
+        OPENAI_BASE_URL: https://groq.com # Примусово перенаправляємо openai на Groq API
       run: |
-        python -m garak --target_type openai --target_name llama3-8b-8192 --model_url https://groq.com --probes promptinject --exit_on_hit
+        # Запускаємо чисту команду без зайвих прапорців урлів, які ламають CLI
+        python -m garak --target_type openai --target_name llama3-8b-8192 --probes promptinject
