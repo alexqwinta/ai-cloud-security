@@ -1,0 +1,21 @@
+customRules:
+  ai_runtime_security.yaml: |-
+    # МАКРОС: Визначаємо підсистему штучного інтелекту за міткою в K8s
+    - macro: ai_environment
+      condition: k8s.pod.labels.app = "ai-model"
+
+    # ПРАВИЛО 1: Перехоплення спроб крадіжки файлів моделей або інтелектуальної власності
+    - rule: Exfiltration of AI Model Weights
+      desc: Detects an unauthorized process attempting to open, read or copy weight files (.safetensors, .bin, .pkl)
+      condition: ai_environment and open_read and (fd.name glob "*.safetensors" or fd.name glob "*.bin" or fd.name glob "*.pkl") and not proc.name in (python, python3, jupyter)
+      output: "ALERT: ATTACK IN PROGRESS! Unauthorized attempt to access model weights! (user=%user.name pod=%k8s.pod.name file=%fd.name process=%proc.name command=%proc.cmdline)"
+      priority: CRITICAL
+      tags: [mitre_exfiltration, ai_security]
+
+    # ПРАВИЛО 2: Виявлення аномальної активності всередині ШІ-рантайму (сторонній софт)
+    - rule: Suspicious Shell or Binary Spawned in AI Container
+      desc: Detects untrusted binaries executed inside the container, common after Prompt Injection/RCE
+      condition: ai_environment and spawned_process and not proc.name in (python, python3, pip, nvidia-smi)
+      output: "WARNING: Threat detected! Suspicious binary execution inside AI runtime (user=%user.name pod=%k8s.pod.name process=%proc.name executed_command=%proc.cmdline)"
+      priority: WARNING
+      tags: [mitre_execution, runtime_anomaly]
