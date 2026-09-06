@@ -25,8 +25,9 @@ jobs:
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'config'
+        scan-ref: '.' # ПРИМУСОВО вказуємо перевіряти всю поточну директорію з усіма файлами
         format: 'table'
-        exit-code: '0'
+        exit-code: '1'
         severity: 'HIGH,CRITICAL'
 
   ai-model-dast:
